@@ -1,6 +1,7 @@
 package com.android.launcher3.icons.pack;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,7 +37,8 @@ public class IconPackManager extends BroadcastReceiver {
             "com.teslacoilsw.launcher.THEME",
             "com.gau.go.launcherex.theme",
             "org.adw.launcher.THEMES",
-            "org.adw.launcher.icons.ACTION_PICK_ICON"
+            "org.adw.launcher.icons.ACTION_PICK_ICON",
+            "net.oneplus.launcher.icons.ACTION_PICK_ICON",
     };
 
     private static final Intent[] ICON_INTENTS = new Intent[ICON_INTENT_ACTIONS.length];
@@ -146,6 +148,16 @@ public class IconPackManager extends BroadcastReceiver {
             providerTitles.put(pack.getKey(), pack.getValue().getTitle());
         }
         return providerTitles;
+    }
+
+    public boolean packContainsActivity(String packPackage, ComponentName componentName) {
+        try {
+            IconPack pack = mProviders.get(packPackage);
+            IconPack.Data data = pack.getData(mContext.getPackageManager());
+            return data.drawables.containsKey(componentName);
+        } catch (PackageManager.NameNotFoundException | XmlPullParserException | IOException ignored) {
+            return false;
+        }
     }
 
     /**
